@@ -114,7 +114,7 @@ public class ComposeFileReader {
 
         } else {
 
-            throw new FileNotFoundException("docker-compose file not found");
+            System.err.println("docker-compose file not found");
 
         }
 
@@ -153,8 +153,9 @@ public class ComposeFileReader {
 
         } else {
 
-            throw new FileNotFoundException("docker-compose file not found");
+            System.err.println("docker-compose file not found");
 
+            return;
         }
 
         String composeFileInString = readFile(dockerComposeFilePath);
