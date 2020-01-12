@@ -20,71 +20,71 @@ public final class ComposeToSakkuPipelineConverter {
     private static final Pattern MEM_M = Pattern.compile("^(?<size>\\d+)(m|M)$");
     private static final Pattern MEM_GB = Pattern.compile("^(?<size>\\d+)(gb|GB)$");
 
-    private static final Pattern MYSQL_VOLUME = Pattern.compile("^/var/lib/mysql(/)?$");
-    private static final Pattern POSTGRES_VOLUME = Pattern.compile("^/var/lib/postgresql/data(/)?$");
-
     private static final String FILE_REGEX = "/(?<file>[A-Za-z0-9${}]+)\\.(?<suffix>[A-Za-z0-9${}]+)";
 
     public static List<SakkuApp> convert(ComposeFile composeFile) {
 
         List<SakkuApp> pipeline = new ArrayList<>();
 
-        for (String serviceName : composeFile.getServices().keySet()) {
+        if(Objects.nonNull(composeFile)) {
 
-            ServiceSpec service = composeFile.getServices().get(serviceName);
+            for (String serviceName : composeFile.getServices().keySet()) {
 
-
-            SakkuApp.SakkuAppBuilder sakkuAppBuilder = SakkuApp.builder()
-                    .name(serviceName)
-                    .cmd(service.getCommand())
-                    .image(convertComposeImageToSakkuImage(service.getImage()))
-                    .links(service.getLinks())
-                    .dependsOn(service.getDependsOn())
-                    .environments(service.getEnvironment())
-                    .labels(service.getLabels())
-                    .ports(convertComposePortsToSakkuPorts(service.getPorts()))
-                    .modules(convertVolumesToModules(service.getVolumes()));
+                ServiceSpec service = composeFile.getServices().get(serviceName);
 
 
-            Deploy deploy;
+                SakkuApp.SakkuAppBuilder sakkuAppBuilder = SakkuApp.builder()
+                        .name(serviceName)
+                        .cmd(service.getCommand())
+                        .image(convertComposeImageToSakkuImage(service.getImage()))
+                        .links(service.getLinks())
+                        .dependsOn(service.getDependsOn())
+                        .environments(service.getEnvironment())
+                        .labels(service.getLabels())
+                        .ports(convertComposePortsToSakkuPorts(service.getPorts()))
+                        .modules(convertVolumesToModules(service.getVolumes()));
 
-            if (Objects.nonNull(deploy = service.getDeploy())) {
 
-                Resources resources;
-                if (Objects.nonNull(deploy.getResources()) && Objects.nonNull(resources = deploy.getResources().getReservations())) {
+                Deploy deploy;
 
-                    sakkuAppBuilder.cpu(resources.getCpus());
+                if (Objects.nonNull(deploy = service.getDeploy())) {
 
-                    String memory = resources.getMemory();
+                    Resources resources;
+                    if (Objects.nonNull(deploy.getResources()) && Objects.nonNull(resources = deploy.getResources().getReservations())) {
 
-                    Matcher matcher;
+                        sakkuAppBuilder.cpu(resources.getCpus());
 
-                    if ((matcher = MEM_GB.matcher(memory)).matches()) {
-                        sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")));
-                    } else if ((matcher = MEM_M.matcher(memory)).matches()) {
-                        sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")) / 1024);
+                        String memory = resources.getMemory();
+
+                        Matcher matcher;
+
+                        if ((matcher = MEM_GB.matcher(memory)).matches()) {
+                            sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")));
+                        } else if ((matcher = MEM_M.matcher(memory)).matches()) {
+                            sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")) / 1024);
+                        }
+                    }
+
+                    long replicas = deploy.getReplicas();
+
+                    if (replicas > 0) {
+                        sakkuAppBuilder.maxInstance(replicas);
                     }
                 }
 
-                long replicas = deploy.getReplicas();
 
-                if (replicas > 0) {
-                    sakkuAppBuilder.maxInstance(replicas);
+                Build composeBuild;
+
+                if (Objects.nonNull(composeBuild = service.getBuild())) {
+
+                    List<String> args = new ArrayList<>(composeBuild.getArgs().keySet());
+
+                    sakkuAppBuilder.args(args);
                 }
+
+
+                pipeline.add(sakkuAppBuilder.build());
             }
-
-
-            Build composeBuild;
-
-            if (Objects.nonNull(composeBuild = service.getBuild())) {
-
-                List<String> args = new ArrayList<>(composeBuild.getArgs().keySet());
-
-                sakkuAppBuilder.args(args);
-            }
-
-
-            pipeline.add(sakkuAppBuilder.build());
         }
 
         return pipeline;
@@ -140,7 +140,7 @@ public final class ComposeToSakkuPipelineConverter {
                     sakkuPortBuilder.port(portConfig.getPublished().toString());
 
                 if(Objects.nonNull(portConfig.getProtocol()))
-                    sakkuPortBuilder.protocol(portConfig.getProtocol().toString());
+                    sakkuPortBuilder.protocol(portConfig.getProtocol());
 
                 sakkuPorts.add(sakkuPortBuilder.build());
             });

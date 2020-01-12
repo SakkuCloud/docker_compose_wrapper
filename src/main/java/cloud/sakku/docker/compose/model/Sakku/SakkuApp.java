@@ -91,8 +91,8 @@ public class SakkuApp {
     @Builder.Default
     private long maxInstance = 2;
 
-    @SerializedName("depend_on")
-    @JsonProperty("depend_on")
+    @SerializedName("dependsOn")
+    @JsonProperty("dependsOn")
     @Builder.Default
     private List<String> dependsOn = new ArrayList<>();
 

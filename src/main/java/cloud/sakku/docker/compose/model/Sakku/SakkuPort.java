@@ -1,5 +1,6 @@
 package cloud.sakku.docker.compose.model.Sakku;
 
+import cloud.sakku.docker.compose.constant.Protocol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
@@ -17,9 +18,9 @@ public class SakkuPort {
     private String port;
 
     @SerializedName("protocol")
-    @JsonProperty(value = "protocol", defaultValue = "HTTP")
+    @JsonProperty(value = "protocol", defaultValue = "http")
     @Builder.Default
-    private String protocol = "HTTP";
+    private Protocol protocol = Protocol.HTTP;
 
     @SerializedName("ssl")
     @JsonProperty(value = "ssl", defaultValue = "false")
