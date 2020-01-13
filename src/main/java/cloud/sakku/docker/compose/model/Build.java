@@ -30,7 +30,7 @@ public class Build {
     public void setContext(String context) {
 
         if (context.startsWith(".")) {
-            throw new UnsupportedSyntaxException("relative path to host is not allowed", "build.context", context);
+            throw UnsupportedSyntaxException.getInstance("relative path to host is not allowed", "build.context", context);
         }
 
         this.context = context;
@@ -49,15 +49,15 @@ public class Build {
 
         if (args instanceof Map) {
 
-            this.args.putAll((Map<String, Object>) args);
+            this.args.putAll(Map.class.cast(args));
 
         } else if (args instanceof List) {
 
-            this.args.putAll(DockerShortSyntaxParser.parse((List<String>) args));
+            this.args.putAll(DockerShortSyntaxParser.parse(List.class.cast(args)));
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "build.args", args.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "build.args", args.toString());
 
         }
     }
@@ -71,15 +71,15 @@ public class Build {
 
         if (labels instanceof Map) {
 
-            this.labels.putAll((Map<String, Object>) labels);
+            this.labels.putAll(Map.class.cast(labels));
 
         } else if (labels instanceof List) {
 
-            this.labels.putAll(DockerShortSyntaxParser.parse((List<String>) labels));
+            this.labels.putAll(DockerShortSyntaxParser.parse(List.class.cast(labels)));
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "build.labels", labels.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "build.labels", labels.toString());
 
         }
     }
@@ -88,7 +88,7 @@ public class Build {
     static Build create(String context) {
 
         if (context.startsWith(".")) {
-            throw new UnsupportedSyntaxException("relative path to host is not allowed", "build", context);
+            throw UnsupportedSyntaxException.getInstance("relative path to host is not allowed", "build", context);
         }
 
         return Build.builder()

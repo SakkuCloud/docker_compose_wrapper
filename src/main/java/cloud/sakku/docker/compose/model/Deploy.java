@@ -48,15 +48,15 @@ public class Deploy {
 
         if (labels instanceof Map) {
 
-            this.labels.putAll((Map<String, Object>) labels);
+            this.labels.putAll(Map.class.cast(labels));
 
         } else if (labels instanceof List) {
 
-            this.labels.putAll(DockerShortSyntaxParser.parse((List<String>) labels));
+            this.labels.putAll(DockerShortSyntaxParser.parse(List.class.cast(labels)));
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "deploy.labels", labels.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "deploy.labels", labels.toString());
 
         }
     }

@@ -43,7 +43,7 @@ public class Image {
             image += name;
 
             if(Objects.nonNull(tag) && !tag.isEmpty())
-                image += "/" + tag;
+                image += ":" + tag;
 
 
         } else if (Objects.nonNull(repository) && !repository.isEmpty()) {
@@ -51,7 +51,7 @@ public class Image {
             image += repository;
 
             if(Objects.nonNull(tag) && !tag.isEmpty())
-                image += ":" + tag;
+                image += "/" + tag;
 
         }
 

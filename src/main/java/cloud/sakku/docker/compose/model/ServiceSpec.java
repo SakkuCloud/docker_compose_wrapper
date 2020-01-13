@@ -50,7 +50,7 @@ public class ServiceSpec {
 
         } else if (command instanceof List) {
 
-            List<String> commandList = (List<String>) command;
+            List<String> commandList = List.class.cast(command);
 
             this.command = "";
 
@@ -60,7 +60,7 @@ public class ServiceSpec {
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "command", command.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "command", command.toString());
 
         }
     }
@@ -92,7 +92,7 @@ public class ServiceSpec {
 
         if (dnsObject instanceof List) {
 
-            List<String> dnsList = (List<String>) dnsObject;
+            List<String> dnsList = List.class.cast(dnsObject);
 
             dnsList.forEach(dns -> {
                 this.dns.add(dns);
@@ -104,7 +104,7 @@ public class ServiceSpec {
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "dns", dnsObject.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "dns", dnsObject.toString());
 
         }
 
@@ -120,7 +120,7 @@ public class ServiceSpec {
 
         if (dnsSearchObject instanceof List) {
 
-            List<String> dnsList = (List<String>) dnsSearchObject;
+            List<String> dnsList = List.class.cast(dnsSearchObject);
 
             dnsList.forEach(dnsSearch -> {
                 this.dnsSearch.add(dnsSearch);
@@ -132,7 +132,7 @@ public class ServiceSpec {
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "dns_search", dnsSearchObject.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "dns_search", dnsSearchObject.toString());
 
         }
 
@@ -147,7 +147,7 @@ public class ServiceSpec {
     public void setEntrypoint(Object entrypointObject) {
 
         if (entrypointObject instanceof List) {
-            List<String> entrypointList = (List<String>) entrypointObject;
+            List<String> entrypointList = List.class.cast(entrypointObject);
 
             entrypointList.forEach(entrypoint -> {
                 this.entrypoint.add(entrypoint);
@@ -159,7 +159,7 @@ public class ServiceSpec {
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "entrypoint", entrypointObject.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "entrypoint", entrypointObject.toString());
 
         }
 
@@ -183,38 +183,28 @@ public class ServiceSpec {
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "environment", environment.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "environment", environment.toString());
 
         }
     }
 
+    @SerializedName("env_file")
+    private List<String> envFile = new ArrayList<>();
+
     @JsonSetter("env_file")
-    public void setEnvFile(Object envFileObject) {
+    public void setEnvFile(Object envFileObject) throws FileNotFoundException {
 
         if (envFileObject instanceof List) {
-            List<String> envFileList = (List<String>) envFileObject;
 
-
-            envFileList.forEach(envFile -> {
-
-                try {
-                    this.environment.putAll(EnvironmentFileReader.read(envFile));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-            });
+            this.envFile.addAll(List.class.cast(envFileObject));
 
         } else if (envFileObject instanceof String) {
 
-            try {
-                this.environment.putAll(EnvironmentFileReader.read(envFileObject.toString()));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            this.envFile.add(envFileObject.toString());
+
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "env_file", envFileObject.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "env_file", envFileObject.toString());
 
         }
 
@@ -237,15 +227,15 @@ public class ServiceSpec {
 
         if (labels instanceof Map) {
 
-            this.labels.putAll((Map<String, Object>) labels);
+            this.labels.putAll(Map.class.cast(labels));
 
         } else if (labels instanceof List) {
 
-            this.labels.putAll(DockerShortSyntaxParser.parse((List<String>) labels));
+            this.labels.putAll(DockerShortSyntaxParser.parse(List.class.cast(labels)));
 
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "labels", labels.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "labels", labels.toString());
 
         }
     }
@@ -263,7 +253,7 @@ public class ServiceSpec {
     @JsonSetter("networks")
     public void setNetworks(Object networks) {
         if (networks instanceof Map) {
-            Map<String, Object> networksMap = (Map<String, Object>) networks;
+            Map<String, Object> networksMap = Map.class.cast(networks);
 
             networksMap.keySet().forEach(key -> {
                 this.networks.add(key);
@@ -273,7 +263,7 @@ public class ServiceSpec {
             this.networks.addAll((Collection<? extends String>) networks);
         } else {
 
-            throw new UnsupportedSyntaxException("unsupported syntax", "networks", networks.toString());
+            throw UnsupportedSyntaxException.getInstance("unsupported syntax", "networks", networks.toString());
 
         }
     }
@@ -300,8 +290,8 @@ public class ServiceSpec {
     @JsonSetter("working_dir")
     public void setWorkingDir(String workingDir) {
 
-        if (workingDir.startsWith(".")) {
-            throw new UnsupportedSyntaxException("relative path to host is not allowed", "working_dir",  workingDir);
+        if (Objects.nonNull(workingDir) && workingDir.startsWith(".")) {
+            throw UnsupportedSyntaxException.getInstance("relative path to host is not allowed", "working_dir",  workingDir);
         }
 
         this.workingDir = workingDir;

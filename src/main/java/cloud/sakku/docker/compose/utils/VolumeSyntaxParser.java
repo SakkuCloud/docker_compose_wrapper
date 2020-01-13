@@ -22,7 +22,7 @@ public final class VolumeSyntaxParser {
 
         else if (parts.length >= 2) {
             if (parts[0].startsWith(".")) {
-                throw new UnsupportedSyntaxException("relative path to host is not allowed", "volume", source);
+                throw UnsupportedSyntaxException.getInstance("relative path to host is not allowed", "volume", source);
             }
 
             builder.host(parts[0]);
