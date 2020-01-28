@@ -46,54 +46,6 @@ public class ComposeFileReader {
     // environments from '.env' file
     private Map<String, Object> defaultEnvironment = new HashMap<>();
 
-    public static void main(String[] args) {
-        /**
-         * args[0] : docker compose directory path
-         * args[1] : export directory path
-         * args[2] : name of export file
-         */
-        if (args.length < 2) {
-            System.err.println("No docker compose directory path or export directory path given");
-            return;
-        }
-
-        String dockerComposePath = args[0];
-        String exportPath = args[1];
-        String exportFileName = "sakku_pipeline_config.json";
-
-        if (args.length > 2)
-            exportFileName = args[2];
-
-        try {
-            ComposeFileReader composeFileReader = new ComposeFileReader(dockerComposePath);
-
-            if (Objects.nonNull(composeFileReader.getComposeFile())) {
-
-                File exportDirectory = new File(exportPath);
-                exportDirectory.mkdirs();
-
-                if (exportPath.lastIndexOf("/") != exportPath.length() - 1) {
-                    exportPath += "/";
-                }
-
-                File exportPipelineConfigFile = new File(exportPath + exportFileName);
-
-                exportPipelineConfigFile.createNewFile();
-
-                FileWriter file = new FileWriter(exportPipelineConfigFile);
-                file.write(composeFileReader.toSakkuPipelineJson());
-                file.close();
-
-
-                System.out.println("\033[0;32m" + "Sakku Pipeline JSON config Successfully Create :)");
-            }
-
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
-    }
-
     /**
      * read compose file from File
      *
@@ -114,7 +66,7 @@ public class ComposeFileReader {
 
         } else {
 
-            System.err.println("docker-compose file not found");
+            throw new FileNotFoundException("docker-compose file not found");
 
         }
 
@@ -153,9 +105,8 @@ public class ComposeFileReader {
 
         } else {
 
-            System.err.println("docker-compose file not found");
+            throw new FileNotFoundException("docker-compose file not found");
 
-            return;
         }
 
         String composeFileInString = readFile(dockerComposeFilePath);
@@ -186,15 +137,12 @@ public class ComposeFileReader {
 
         } catch (JsonMappingException e) {
 
-            System.err.println(e.getCause().getMessage());
-
-            return null;
+            throw ComposeFileReaderException.getInstance(e.getCause().getMessage(), e.getCause(), getErrorPath(e.getPath()), e.getLocation().getLineNr(), e.getLocation().getColumnNr());
 
         } catch (Exception e) {
 
-            System.err.println(e.getMessage());
+            throw ComposeFileReaderException.getInstance(e.getMessage(), e.getCause());
 
-            return null;
         }
     }
 
