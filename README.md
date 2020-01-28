@@ -1,8 +1,14 @@
-# docker_compose_wrapper
-Create pipeline in Sakku from Docker compose file
+## Docker Compose wrapper
+
+[![](https://jitpack.io/v/SakkuCloud/docker_compose_wrapper.svg)](https://jitpack.io/#SakkuCloud/docker_compose_wrapper)
 
 
-To get a Git project into your build:
+Create pipeline in Sakku from Docker compose file!
+
+*  **Disclaimer: this project is under heavy development!**
+
+
+### Add to project
 
 Step 1. Add the JitPack repository to your build file
 ```
