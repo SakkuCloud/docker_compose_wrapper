@@ -18,7 +18,7 @@ public enum DeployMode {
     }
 
     @JsonValue
-    public String getValue(){
+    public String getValue() {
         return value;
     }
 }

@@ -3,8 +3,8 @@ package cloud.sakku.docker.compose.utils;
 
 import cloud.sakku.docker.compose.constant.PortMode;
 import cloud.sakku.docker.compose.constant.Protocol;
-import cloud.sakku.docker.compose.model.PortConfig;
 import cloud.sakku.docker.compose.exception.UnsupportedSyntaxException;
+import cloud.sakku.docker.compose.model.PortConfig;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -19,20 +19,17 @@ public final class PortShortSyntaxParser {
     private static final Pattern RANGE_HOST_INTERFACE_CONTAINER_PORTS = Pattern.compile("^(?<interface>.+?):(?<hostRangeStart>\\d+)-(?<hostRangeEnd>\\d+):(?<containerRangeStart>\\d+)-(?<containerRangeEnd>\\d+)");
 
     public static PortConfig parse(final String source) throws IOException {
-
         Matcher matcher;
         final PortConfig.PortConfigBuilder builder = PortConfig.builder();
 
         if ((matcher = SINGLE_CONTAINER_PORT.matcher(source)).matches()) {
-
             builder.mode(PortMode.HOST)
                     .target(matcher.group("container"));
 
             return builder.build();
         }
 
-        if((matcher = SINGLE_HOST_CONTAINER_PORTS_WITH_PROTOCOL.matcher(source)).matches()){
-
+        if ((matcher = SINGLE_HOST_CONTAINER_PORTS_WITH_PROTOCOL.matcher(source)).matches()) {
             builder
                     .mode(PortMode.INGRESS)
                     .published(matcher.group("host"))
@@ -43,7 +40,6 @@ public final class PortShortSyntaxParser {
         }
 
         if ((matcher = SINGLE_HOST_CONTAINER_PORTS.matcher(source)).matches()) {
-
             builder
                     .mode(PortMode.INGRESS)
                     .published(matcher.group("host"))

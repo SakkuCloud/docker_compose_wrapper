@@ -29,7 +29,7 @@ public class SakkuModule {
     private Map<String, Object> metadata = new HashMap<>();
 
 
-    public static SakkuModule createReplicatedStorageModule(String appPath){
+    public static SakkuModule createReplicatedStorageModule(String appPath) {
 
         Map<String, Object> metadata = new HashMap<>();
 

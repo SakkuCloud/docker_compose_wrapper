@@ -38,8 +38,7 @@ public class HealthCheckConfig {
     public HealthCheckConfig(@JsonProperty("interval") String interval,
                              @JsonProperty("timeout") String timeout,
                              @JsonProperty("retries") int retries,
-                             @JsonProperty("start_period") String startPeriod)
-    {
+                             @JsonProperty("start_period") String startPeriod) {
 
         this.interval = interval;
         this.timeout = timeout;

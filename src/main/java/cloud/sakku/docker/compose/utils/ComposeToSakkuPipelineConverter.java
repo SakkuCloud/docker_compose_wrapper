@@ -2,9 +2,9 @@ package cloud.sakku.docker.compose.utils;
 
 import cloud.sakku.docker.compose.model.*;
 import cloud.sakku.docker.compose.model.Sakku.SakkuApp;
+import cloud.sakku.docker.compose.model.Sakku.SakkuImage;
 import cloud.sakku.docker.compose.model.Sakku.SakkuModule;
 import cloud.sakku.docker.compose.model.Sakku.SakkuPort;
-import cloud.sakku.docker.compose.model.Sakku.SakkuImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public final class ComposeToSakkuPipelineConverter {
 
         List<SakkuApp> pipeline = new ArrayList<>();
 
-        if(Objects.nonNull(composeFile)) {
+        if (Objects.nonNull(composeFile)) {
 
             for (String serviceName : composeFile.getServices().keySet()) {
 
@@ -90,17 +90,17 @@ public final class ComposeToSakkuPipelineConverter {
         return pipeline;
     }
 
-    private static List<SakkuModule> convertVolumesToModules(final List<Volume> volumes){
+    private static List<SakkuModule> convertVolumesToModules(final List<Volume> volumes) {
 
         List<SakkuModule> sakkuModules = new ArrayList<>();
 
-        if(Objects.nonNull(volumes)){
+        if (Objects.nonNull(volumes)) {
 
             volumes.forEach(volume -> {
 
                 String container = volume.getContainer();
 
-                if(Pattern.compile(FILE_REGEX).matcher(container).find()){
+                if (Pattern.compile(FILE_REGEX).matcher(container).find()) {
                     container = container.replaceAll(FILE_REGEX, "");
                 }
 
@@ -137,9 +137,9 @@ public final class ComposeToSakkuPipelineConverter {
                 SakkuPort.SakkuPortBuilder sakkuPortBuilder = SakkuPort.builder();
 
                 if (Objects.nonNull(portConfig.getPublished()))
-                    sakkuPortBuilder.port(portConfig.getPublished().toString());
+                    sakkuPortBuilder.port(portConfig.getPublished());
 
-                if(Objects.nonNull(portConfig.getProtocol()))
+                if (Objects.nonNull(portConfig.getProtocol()))
                     sakkuPortBuilder.protocol(portConfig.getProtocol());
 
                 sakkuPorts.add(sakkuPortBuilder.build());

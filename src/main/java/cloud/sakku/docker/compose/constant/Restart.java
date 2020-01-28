@@ -23,7 +23,7 @@ public enum Restart {
     }
 
     @JsonValue
-    public String getValue(){
+    public String getValue() {
         return value;
     }
 }

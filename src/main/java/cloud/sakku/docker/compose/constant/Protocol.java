@@ -19,17 +19,17 @@ public enum Protocol {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public static Protocol find(String value){
-        for (Protocol protocol:values()){
+    public static Protocol find(String value) {
+        for (Protocol protocol : values()) {
             if (protocol.getValue().equals(value))
                 return protocol;
         }
 
         return null;
+    }
+
+    public String getValue() {
+        return value;
     }
 
 

@@ -24,7 +24,7 @@ public class Service {
 
 
     @JsonCreator
-    static Service create(String link){
+    static Service create(String link) {
         return ServiceSyntaxParser.parse(link);
     }
 }
