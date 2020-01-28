@@ -19,7 +19,7 @@ public class ComposeFileReaderException extends RuntimeException {
         super(message, cause);
     }
 
-    public ComposeFileReaderException(String message, List<String> path, int line, int column){
+    public ComposeFileReaderException(String message, List<String> path, int line, int column) {
 
         super(message);
 
@@ -28,9 +28,9 @@ public class ComposeFileReaderException extends RuntimeException {
         this.column = column;
     }
 
-    public ComposeFileReaderException(String message, Throwable cause, List<String> path, int line, int column){
+    public ComposeFileReaderException(String message, Throwable cause, List<String> path, int line, int column) {
 
-        super(message,cause);
+        super(message, cause);
 
         this.path = path;
         this.line = line;
@@ -54,27 +54,27 @@ public class ComposeFileReaderException extends RuntimeException {
     }
 
     @Override
-    public String getMessage(){
+    public String getMessage() {
         StringBuilder error = new StringBuilder();
 
-        if(Objects.nonNull(super.getMessage()) && !super.getMessage().isEmpty()){
+        if (Objects.nonNull(super.getMessage()) && !super.getMessage().isEmpty()) {
             error.append(super.getMessage());
         }
 
-        if(Objects.nonNull(path)){
+        if (Objects.nonNull(path)) {
             error.append(" [path: ");
 
-            for (int i = 0; i < path.size() ; i++){
+            for (int i = 0; i < path.size(); i++) {
                 error.append(path.get(i));
 
-                if(i< path.size() - 1)
+                if (i < path.size() - 1)
                     error.append(".");
                 else
                     error.append("]");
             }
         }
 
-        if(column > 0 && line > 0){
+        if (column > 0 && line > 0) {
             error.append(" [location: ").append("line=").append(line).append(", column=").append(column).append("]");
         }
 

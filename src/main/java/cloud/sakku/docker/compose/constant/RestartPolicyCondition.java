@@ -20,7 +20,7 @@ public enum RestartPolicyCondition {
     }
 
     @JsonValue
-    public String getValue(){
+    public String getValue() {
         return value;
     }
 }

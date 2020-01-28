@@ -35,22 +35,15 @@ public class Image {
 
     @Override
     public String toString() {
-
         String image = "";
-
         if (Objects.nonNull(name) && !name.isEmpty()) {
-
             image += name;
-
-            if(Objects.nonNull(tag) && !tag.isEmpty())
+            if (Objects.nonNull(tag) && !tag.isEmpty())
                 image += ":" + tag;
 
-
         } else if (Objects.nonNull(repository) && !repository.isEmpty()) {
-
             image += repository;
-
-            if(Objects.nonNull(tag) && !tag.isEmpty())
+            if (Objects.nonNull(tag) && !tag.isEmpty())
                 image += "/" + tag;
 
         }

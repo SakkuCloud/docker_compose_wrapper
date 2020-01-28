@@ -1,8 +1,8 @@
 package cloud.sakku.docker.compose.utils;
 
 
-import cloud.sakku.docker.compose.model.Volume;
 import cloud.sakku.docker.compose.exception.UnsupportedSyntaxException;
+import cloud.sakku.docker.compose.model.Volume;
 
 
 public final class VolumeSyntaxParser {
@@ -12,18 +12,14 @@ public final class VolumeSyntaxParser {
     }
 
     public static Volume parse(final String source) {
-
         String[] parts = source.split(":");
-
         Volume.VolumeBuilder builder = Volume.builder();
-
         if (parts.length == 1)
             builder.container(parts[0]);
 
         else if (parts.length >= 2) {
-            if (parts[0].startsWith(".")) {
+            if (parts[0].startsWith("."))
                 throw UnsupportedSyntaxException.getInstance("relative path to host is not allowed", "volume", source);
-            }
 
             builder.host(parts[0]);
             builder.container(parts[1]);

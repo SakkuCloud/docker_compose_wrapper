@@ -1,12 +1,12 @@
 package cloud.sakku.docker.compose.model;
 
+import cloud.sakku.docker.compose.constant.DeployMode;
 import cloud.sakku.docker.compose.exception.UnsupportedSyntaxException;
 import cloud.sakku.docker.compose.utils.DockerShortSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.gson.annotations.SerializedName;
-import cloud.sakku.docker.compose.constant.DeployMode;
 import lombok.*;
 
 import java.util.HashMap;
@@ -45,19 +45,12 @@ public class Deploy {
 
     @JsonSetter("labels")
     public void setLabels(Object labels) {
-
         if (labels instanceof Map) {
-
-            this.labels.putAll(Map.class.cast(labels));
-
+            this.labels.putAll((Map) labels);
         } else if (labels instanceof List) {
-
-            this.labels.putAll(DockerShortSyntaxParser.parse(List.class.cast(labels)));
-
+            this.labels.putAll(DockerShortSyntaxParser.parse((List) labels));
         } else {
-
             throw UnsupportedSyntaxException.getInstance("unsupported syntax", "deploy.labels", labels.toString());
-
         }
     }
 

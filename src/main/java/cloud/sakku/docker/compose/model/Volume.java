@@ -1,10 +1,10 @@
 package cloud.sakku.docker.compose.model;
 
+import cloud.sakku.docker.compose.utils.VolumeSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
-import cloud.sakku.docker.compose.utils.VolumeSyntaxParser;
 import lombok.*;
 
 

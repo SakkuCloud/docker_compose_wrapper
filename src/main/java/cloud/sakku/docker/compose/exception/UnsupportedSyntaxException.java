@@ -14,13 +14,17 @@ public class UnsupportedSyntaxException extends RuntimeException {
         this.value = value;
     }
 
-    public static UnsupportedSyntaxException getInstance(String message, String field, String value){
+    public static UnsupportedSyntaxException getInstance(String message, String field, String value) {
         return new UnsupportedSyntaxException(message, field, value);
     }
 
 
-    public String getField(){ return field;}
+    public String getField() {
+        return field;
+    }
 
-    public String getValue() {return value;}
+    public String getValue() {
+        return value;
+    }
 
 }

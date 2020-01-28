@@ -2,10 +2,10 @@ package cloud.sakku.docker.compose.model;
 
 import cloud.sakku.docker.compose.constant.PortMode;
 import cloud.sakku.docker.compose.constant.Protocol;
+import cloud.sakku.docker.compose.utils.PortShortSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
-import cloud.sakku.docker.compose.utils.PortShortSyntaxParser;
 import lombok.*;
 
 import java.io.IOException;

@@ -1,9 +1,9 @@
 package cloud.sakku.docker.compose.model;
 
+import cloud.sakku.docker.compose.utils.HostSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
-import cloud.sakku.docker.compose.utils.HostSyntaxParser;
 import lombok.*;
 
 @Data
@@ -23,7 +23,7 @@ public class Host {
     private String ip;
 
     @JsonCreator
-    static Host create(String host){
+    static Host create(String host) {
         return HostSyntaxParser.parse(host);
     }
 }
