@@ -13,15 +13,12 @@ import lombok.*;
 @Setter
 @Getter
 public class Service {
-
     @SerializedName("name")
     @JsonProperty("name")
     private String name;
-
     @SerializedName("alias")
     @JsonProperty("alias")
     private String alias;
-
 
     @JsonCreator
     static Service create(String link) {

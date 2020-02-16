@@ -2,6 +2,7 @@ package cloud.sakku.docker.compose.model;
 
 import cloud.sakku.docker.compose.constant.Capability;
 import cloud.sakku.docker.compose.constant.Restart;
+import cloud.sakku.docker.compose.exception.ComposeFileReaderException;
 import cloud.sakku.docker.compose.exception.UnsupportedSyntaxException;
 import cloud.sakku.docker.compose.utils.DockerShortSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -83,7 +84,7 @@ public class ServiceSpec {
     @SerializedName("networks")
     @JsonProperty("networks")
     @Builder.Default
-    private List<String> networks = new ArrayList<>();
+    private List<Network> networks = new ArrayList<>();
     @SerializedName("ports")
     @JsonProperty("ports")
     @Builder.Default
@@ -197,12 +198,37 @@ public class ServiceSpec {
     @JsonSetter("networks")
     public void setNetworks(Object networks) {
         if (networks instanceof Map) {
-            Map<String, Object> networksMap = (Map) networks;
-            networksMap.keySet().forEach(key -> {
-                this.networks.add(key);
+            Map<String, Object> networksMap = Map.class.cast(networks);
+            if (networksMap.size() > 1){
+                throw ComposeFileReaderException.getInstance("Only one network support !");
+            }
+
+            networksMap.forEach((networkName, networkConfigs) -> {
+                Network.NetworkBuilder builder = Network.builder();
+                builder.name(networkName);
+
+                if(Objects.nonNull(networkConfigs)) {
+                    Map<String, Object> networkConfigsMap = Map.class.cast(networkConfigs);
+                    if (networkConfigsMap.containsKey("aliases"))
+                        builder.aliases(List.class.cast(networkConfigsMap.get("aliases")));
+                }
+                this.networks.add(builder.build());
             });
+
         } else if (networks instanceof List) {
-            this.networks.addAll((Collection<? extends String>) networks);
+            List<Object> networksList = List.class.cast(networks);
+            if (networksList.size() > 1){
+                throw ComposeFileReaderException.getInstance("Only one network support !");
+            }
+
+            networksList.forEach(network -> {
+                if(network instanceof Map) {
+                    Map<String, Object> networkMap = Map.class.cast(network);
+                    this.networks.add(Network.builder().name(networkMap.get("name").toString()).aliases(List.class.cast(networkMap.get("aliases"))).build());
+                }
+                else if(network instanceof String)
+                    this.networks.add(Network.builder().name(network.toString()).build());
+            });
         } else {
             throw UnsupportedSyntaxException.getInstance("unsupported syntax", "networks", networks.toString());
         }
