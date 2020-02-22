@@ -12,7 +12,6 @@ import lombok.*;
 @Getter
 @Setter
 public class ResourceSpec {
-
     @SerializedName("limits")
     @JsonProperty("limits")
     private Resources limits;
@@ -20,5 +19,4 @@ public class ResourceSpec {
     @SerializedName("reservations")
     @JsonProperty("reservations")
     private Resources reservations;
-
 }

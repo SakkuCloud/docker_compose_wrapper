@@ -16,6 +16,7 @@ public class Service {
     @SerializedName("name")
     @JsonProperty("name")
     private String name;
+
     @SerializedName("alias")
     @JsonProperty("alias")
     private String alias;

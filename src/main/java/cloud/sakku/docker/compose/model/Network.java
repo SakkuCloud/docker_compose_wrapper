@@ -16,6 +16,7 @@ public class Network {
     @SerializedName("name")
     @JsonProperty("name")
     private String name;
+
     @SerializedName("aliases")
     @JsonProperty("aliases")
     private List<String> aliases;

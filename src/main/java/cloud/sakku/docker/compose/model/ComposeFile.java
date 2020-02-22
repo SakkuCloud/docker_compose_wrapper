@@ -23,6 +23,7 @@ public class ComposeFile {
     @JsonProperty("services")
     @Builder.Default
     private Map<String, ServiceSpec> services = new HashMap<>();
+
     @SerializedName("networks")
     @JsonProperty("networks")
     @Builder.Default
