@@ -4,19 +4,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
-public class ResourceSpec {
-    @SerializedName("limits")
-    @JsonProperty("limits")
-    private Resources limits;
+@Getter
+public class Network {
+    @SerializedName("name")
+    @JsonProperty("name")
+    private String name;
 
-    @SerializedName("reservations")
-    @JsonProperty("reservations")
-    private Resources reservations;
+    @SerializedName("aliases")
+    @JsonProperty("aliases")
+    private List<String> aliases;
 }

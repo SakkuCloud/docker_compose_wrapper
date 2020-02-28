@@ -17,7 +17,6 @@ import java.io.IOException;
 @Getter
 @Setter
 public class PortConfig {
-
     @SerializedName("target")
     @JsonProperty("target")
     private String target; // the port inside the container
@@ -44,5 +43,4 @@ public class PortConfig {
     static PortConfig create(Integer containerPort) {
         return builder().target(containerPort.toString()).build();
     }
-
 }

@@ -12,7 +12,6 @@ import lombok.*;
 @Getter
 @Setter
 public class Resources {
-
     @SerializedName("cpus")
     @JsonProperty("cpus")
     private Double cpus;
@@ -20,5 +19,4 @@ public class Resources {
     @SerializedName("memory")
     @JsonProperty("memory")
     private String memory;
-
 }

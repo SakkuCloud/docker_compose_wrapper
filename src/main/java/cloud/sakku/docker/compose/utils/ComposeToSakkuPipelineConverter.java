@@ -32,12 +32,10 @@ public final class ComposeToSakkuPipelineConverter {
 
                 ServiceSpec service = composeFile.getServices().get(serviceName);
 
-
                 SakkuApp.SakkuAppBuilder sakkuAppBuilder = SakkuApp.builder()
                         .name(serviceName)
                         .cmd(service.getCommand())
                         .image(convertComposeImageToSakkuImage(service.getImage()))
-                        .links(service.getLinks())
                         .dependsOn(service.getDependsOn())
                         .environments(service.getEnvironment())
                         .labels(service.getLabels())
@@ -82,8 +80,64 @@ public final class ComposeToSakkuPipelineConverter {
                     sakkuAppBuilder.args(args);
                 }
 
+                List<Network> composeNetworks = service.getNetworks();
+                if (Objects.nonNull(composeNetworks) && !composeNetworks.isEmpty()) {
+                    Network net = composeNetworks.get(0);
+                    sakkuAppBuilder.network(net.getName());
+                    sakkuAppBuilder.netAliases(net.getAliases());
+                }
 
                 pipeline.add(sakkuAppBuilder.build());
+            }
+
+            for (String serviceName : composeFile.getServices().keySet()) {
+                ServiceSpec service = composeFile.getServices().get(serviceName);
+                List<Service> links = service.getLinks();
+                if (Objects.isNull(links) || links.isEmpty()) {
+                    continue;
+                }
+
+                for (Service link : links) {
+                    // if service link define without alias, nothing happen
+                    if (Objects.isNull(link.getAlias()))
+                        continue;
+
+                    if (!composeFile.getServices().containsKey(link.getName()))
+                        continue;
+
+                    for (SakkuApp sakkuApp : pipeline) {
+                        if (!sakkuApp.getName().equals(link.getName())) {
+                            continue;
+                        }
+
+                        boolean flag = false;
+                        // sakku applications network must be equal or both of them is null
+                        if (Objects.isNull(sakkuApp.getNetwork()) && (Objects.isNull(service.getNetworks()) || service.getNetworks().isEmpty())) {
+                            flag = true;
+                        } else if (Objects.nonNull(sakkuApp.getNetwork()) && (Objects.nonNull(service.getNetworks()) && !service.getNetworks().isEmpty())
+                                && (sakkuApp.getNetwork().equals(service.getNetworks().get(0).getName()))) {
+                            flag = true;
+                        }
+
+                        if (flag) {
+                            boolean aliasIsRepeated = false;
+                            if (Objects.isNull(sakkuApp.getNetAliases())) {
+                                sakkuApp.setNetAliases(new ArrayList<>());
+                            }
+                            for (String sakkuAppAlias : sakkuApp.getNetAliases()) {
+                                if (sakkuAppAlias.equals(link.getAlias())) {
+                                    aliasIsRepeated = true;
+                                    break;
+                                }
+                            }
+
+
+                            if (!aliasIsRepeated)
+                                sakkuApp.getNetAliases().add(link.getAlias());
+                        }
+                    }
+
+                }
             }
         }
 
