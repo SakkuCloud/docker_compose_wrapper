@@ -16,7 +16,6 @@ import lombok.*;
 @Getter
 @JsonIgnoreProperties({"type", "source", "target", "read_only", "bind", "volume", "tmpfs", "consistency"})
 public class Volume {
-
     @SerializedName("host")
     @JsonProperty("host")
     private String host;
@@ -34,5 +33,4 @@ public class Volume {
     static Volume create(String shortHandPortSyntax) {
         return VolumeSyntaxParser.parse(shortHandPortSyntax);
     }
-
 }

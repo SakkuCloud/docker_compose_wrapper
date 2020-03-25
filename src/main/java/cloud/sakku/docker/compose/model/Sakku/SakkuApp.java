@@ -1,6 +1,5 @@
 package cloud.sakku.docker.compose.model.Sakku;
 
-import cloud.sakku.docker.compose.model.Service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
@@ -71,11 +70,6 @@ public class SakkuApp {
     @Builder.Default
     private Map<String, Object> labels = new HashMap<>();
 
-    @SerializedName("links")
-    @JsonProperty("links")
-    @Builder.Default
-    private List<Service> links = new ArrayList<>();
-
     @SerializedName("deployType")
     @JsonProperty(value = "deployType", defaultValue = "DOCKER_IMAGE")
     @Builder.Default
@@ -100,4 +94,13 @@ public class SakkuApp {
     @JsonProperty("modules")
     @Builder.Default
     private List<SakkuModule> modules = new ArrayList<>();
+
+    @SerializedName("network")
+    @JsonProperty("network")
+    private String network;
+
+    @SerializedName("netAliases")
+    @JsonProperty("netAliases")
+    @Builder.Default
+    private List<String> netAliases = new ArrayList<>();
 }

@@ -2,6 +2,7 @@ package cloud.sakku.docker.compose.model;
 
 import cloud.sakku.docker.compose.constant.Capability;
 import cloud.sakku.docker.compose.constant.Restart;
+import cloud.sakku.docker.compose.exception.ComposeFileReaderException;
 import cloud.sakku.docker.compose.exception.UnsupportedSyntaxException;
 import cloud.sakku.docker.compose.utils.DockerShortSyntaxParser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,6 +28,7 @@ public class ServiceSpec {
     @SerializedName("cap_add")
     @JsonProperty("cap_add")
     private List<Capability> capAdd;
+
     @SerializedName("cap_drop")
     @JsonProperty("cap_drop")
     private List<Capability> capDrop;
@@ -34,6 +36,7 @@ public class ServiceSpec {
     @SerializedName("build")
     @JsonProperty("build")
     private Build build;
+
     @SerializedName("image")
     @JsonProperty("image")
     private Image image;
@@ -41,61 +44,79 @@ public class ServiceSpec {
     @SerializedName("command")
     @JsonProperty(value = "command", defaultValue = "")
     private String command = "";
+
     @SerializedName("configs")
     @JsonProperty("configs")
     @Builder.Default
     private List<Config> configs = new ArrayList<>();
+
     @SerializedName("container_name")
     @JsonProperty("container_name")
     private String containerName;
+
     @SerializedName("depends_on")
     @JsonProperty("depends_on")
     @Builder.Default
     private List<String> dependsOn = new ArrayList<>();
+
     @SerializedName("deploy")
     @JsonProperty("deploy")
     private Deploy deploy;
+
     @SerializedName("dns")
     @Builder.Default
     private List<String> dns = new ArrayList<>();
+
     @SerializedName("dns_search")
     @Builder.Default
     private List<String> dnsSearch = new ArrayList<>();
+
     @SerializedName("entrypoint")
     @Builder.Default
     private List<String> entrypoint = new ArrayList<>();
+
     @SerializedName("environment")
     private Map<String, Object> environment = new HashMap<>();
+
     @SerializedName("env_file")
     private List<String> envFile = new ArrayList<>();
+
     @SerializedName("extra_hosts")
     @JsonProperty("extra_hosts")
     private List<Host> extraHosts;
+
     @SerializedName("healthcheck")
     @JsonProperty("healthcheck")
     private HealthCheckConfig healthCheck;
+
     @SerializedName("labels")
     private Map<String, Object> labels = new HashMap<>();
+
     @SerializedName("links")
     @JsonProperty("links")
     @Builder.Default
     private List<Service> links = new ArrayList<>();
+
     @SerializedName("networks")
     @JsonProperty("networks")
     @Builder.Default
-    private List<String> networks = new ArrayList<>();
+    private List<Network> networks = new ArrayList<>();
+
     @SerializedName("ports")
     @JsonProperty("ports")
     @Builder.Default
     private List<PortConfig> ports = new ArrayList<>();
+
     @SerializedName("restart")
     @JsonProperty(value = "restart", defaultValue = "no")
     @Builder.Default
     private Restart restart = Restart.NO;
+
     @SerializedName("volumes")
     @JsonProperty("volumes")
     @Builder.Default
     private List<Volume> volumes = new ArrayList<>();
+
     @SerializedName("working_dir")
     private String workingDir;
 
@@ -197,12 +218,37 @@ public class ServiceSpec {
     @JsonSetter("networks")
     public void setNetworks(Object networks) {
         if (networks instanceof Map) {
-            Map<String, Object> networksMap = (Map) networks;
-            networksMap.keySet().forEach(key -> {
-                this.networks.add(key);
+            Map<String, Object> networksMap = Map.class.cast(networks);
+            if (networksMap.size() > 1){
+                throw ComposeFileReaderException.getInstance("Only one network support !");
+            }
+
+            networksMap.forEach((networkName, networkConfigs) -> {
+                Network.NetworkBuilder builder = Network.builder();
+                builder.name(networkName);
+
+                if(Objects.nonNull(networkConfigs)) {
+                    Map<String, Object> networkConfigsMap = Map.class.cast(networkConfigs);
+                    if (networkConfigsMap.containsKey("aliases"))
+                        builder.aliases(List.class.cast(networkConfigsMap.get("aliases")));
+                }
+                this.networks.add(builder.build());
             });
+
         } else if (networks instanceof List) {
-            this.networks.addAll((Collection<? extends String>) networks);
+            List<Object> networksList = List.class.cast(networks);
+            if (networksList.size() > 1){
+                throw ComposeFileReaderException.getInstance("Only one network support !");
+            }
+
+            networksList.forEach(network -> {
+                if(network instanceof Map) {
+                    Map<String, Object> networkMap = Map.class.cast(network);
+                    this.networks.add(Network.builder().name(networkMap.get("name").toString()).aliases(List.class.cast(networkMap.get("aliases"))).build());
+                }
+                else if(network instanceof String)
+                    this.networks.add(Network.builder().name(network.toString()).build());
+            });
         } else {
             throw UnsupportedSyntaxException.getInstance("unsupported syntax", "networks", networks.toString());
         }

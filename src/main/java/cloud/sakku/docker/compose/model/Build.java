@@ -25,12 +25,15 @@ public class Build {
     @SerializedName("context")
     @JsonProperty("context")
     private String context;
+
     @SerializedName("dockerfile")
     @JsonProperty("dockerfile")
     private String dockerfile;
+
     @SerializedName("args")
     @Builder.Default
     private Map<String, Object> args = new HashMap<>();
+
     @SerializedName("labels")
     @Builder.Default
     private Map<String, Object> labels = new HashMap<>();

@@ -2,9 +2,8 @@ package cloud.sakku.docker.compose;
 
 
 import cloud.sakku.docker.compose.exception.ComposeFileReaderException;
-import cloud.sakku.docker.compose.model.ComposeFile;
+import cloud.sakku.docker.compose.model.*;
 import cloud.sakku.docker.compose.model.Sakku.SakkuApp;
-import cloud.sakku.docker.compose.model.ServiceSpec;
 import cloud.sakku.docker.compose.utils.ComposeToSakkuPipelineConverter;
 import cloud.sakku.docker.compose.utils.EnvironmentFileReader;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -125,7 +124,7 @@ public class ComposeFileReader {
     private ComposeFile readComposeFile(String composeFileInString) throws ComposeFileReaderException {
         try {
             ComposeFile composeFile = convertToComposeFile(composeFileInString);
-            setEnvironmentsValue(composeFile);
+            setEnvironmentsValueAndCheckingProperly(composeFile);
             return composeFile;
         } catch (JsonMappingException e) {
             throw ComposeFileReaderException.getInstance(e.getCause().getMessage(), e.getCause(), getErrorPath(e.getPath()), e.getLocation().getLineNr(), e.getLocation().getColumnNr());
@@ -134,9 +133,12 @@ public class ComposeFileReader {
         }
     }
 
-    private void setEnvironmentsValue(ComposeFile composeFile) {
+    private void setEnvironmentsValueAndCheckingProperly(ComposeFile composeFile) {
         composeFile.getServices().forEach((serviceName, serviceSpec) -> {
             try {
+
+                Map<String, NetworkSpec> networks = composeFile.getNetworks();
+
                 List<String> envFiles = serviceSpec.getEnvFile();
                 if (Objects.nonNull(envFiles) && Objects.nonNull(this.path)) {
                     for (String envFile : envFiles) {
@@ -153,6 +155,25 @@ public class ComposeFileReader {
                         }
                     }
                 }
+
+                List<Network> serviceNetworks = serviceSpec.getNetworks();
+                if(Objects.nonNull(serviceNetworks) && !serviceNetworks.isEmpty()){
+                    for (Network network : serviceNetworks){
+                        if(!networks.containsKey(network.getName())){
+                            throw ComposeFileReaderException.getInstance("There is no network with name \"" + network.getName() + "\"");
+                        }
+                    }
+                }
+
+                List<Service> serviceLinks = serviceSpec.getLinks();
+                if(Objects.nonNull(serviceLinks) && !serviceLinks.isEmpty()){
+                    for (Service link : serviceLinks){
+                        if(!composeFile.getServices().containsKey(link.getName())){
+                            throw ComposeFileReaderException.getInstance("There is no service with name \"" + link.getName() + "\"");
+                        }
+                    }
+                }
+
 
                 String serviceSpecJsonString = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(serviceSpec);
                 Matcher matcher;

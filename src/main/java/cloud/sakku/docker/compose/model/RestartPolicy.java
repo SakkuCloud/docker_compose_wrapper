@@ -13,7 +13,6 @@ import lombok.*;
 @Getter
 @Setter
 public class RestartPolicy {
-
     @SerializedName("condition")
     @JsonProperty(value = "condition", defaultValue = "any")
     @Builder.Default
@@ -33,5 +32,4 @@ public class RestartPolicy {
     @JsonProperty(value = "window", defaultValue = "decide immediately")
     @Builder.Default
     private String window = "decide immediately";
-
 }
