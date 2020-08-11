@@ -18,8 +18,10 @@ public class ErrorModel {
 
     private List<String> path;
 
+    @Builder.Default
     private int column = 0;
 
+    @Builder.Default
     private int line = 0;
 
     @Override

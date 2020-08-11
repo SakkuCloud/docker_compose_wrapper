@@ -43,6 +43,7 @@ public class ServiceSpec {
 
     @SerializedName("command")
     @JsonProperty(value = "command", defaultValue = "")
+    @Builder.Default
     private String command = "";
 
     @SerializedName("configs")
@@ -76,9 +77,11 @@ public class ServiceSpec {
     private List<String> entrypoint = new ArrayList<>();
 
     @SerializedName("environment")
+    @Builder.Default
     private Map<String, Object> environment = new HashMap<>();
 
     @SerializedName("env_file")
+    @Builder.Default
     private List<String> envFile = new ArrayList<>();
 
     @SerializedName("extra_hosts")
@@ -90,6 +93,7 @@ public class ServiceSpec {
     private HealthCheckConfig healthCheck;
 
     @SerializedName("labels")
+    @Builder.Default
     private Map<String, Object> labels = new HashMap<>();
 
     @SerializedName("links")

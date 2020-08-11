@@ -41,6 +41,7 @@ public class Deploy {
     private RestartPolicy restartPolicy;
 
     @SerializedName("labels")
+    @Builder.Default
     private Map<String, Object> labels = new HashMap<>();
 
     @JsonSetter("labels")
