@@ -54,12 +54,13 @@ public final class ComposeToSakkuPipelineConverter {
 
                         String memory = resources.getMemory();
 
-                        Matcher matcher;
-
-                        if ((matcher = MEM_GB.matcher(memory)).matches()) {
-                            sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")));
-                        } else if ((matcher = MEM_M.matcher(memory)).matches()) {
-                            sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")) / 1024);
+                        if (Objects.nonNull(memory)) {
+                            Matcher matcher;
+                            if ((matcher = MEM_GB.matcher(memory)).matches()) {
+                                sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")));
+                            } else if ((matcher = MEM_M.matcher(memory)).matches()) {
+                                sakkuAppBuilder.mem(Double.parseDouble(matcher.group("size")) / 1024);
+                            }
                         }
                     }
 
@@ -73,7 +74,7 @@ public final class ComposeToSakkuPipelineConverter {
 
                 Build composeBuild;
 
-                if (Objects.nonNull(composeBuild = service.getBuild())) {
+                if (Objects.nonNull(composeBuild = service.getBuild()) && (Objects.nonNull(composeBuild.getArgs()))) {
 
                     List<String> args = new ArrayList<>(composeBuild.getArgs().keySet());
 
@@ -153,6 +154,9 @@ public final class ComposeToSakkuPipelineConverter {
             volumes.forEach(volume -> {
 
                 String container = volume.getContainer();
+
+                if (Objects.isNull(container))
+                    return;
 
                 if (Pattern.compile(FILE_REGEX).matcher(container).find()) {
                     container = container.replaceAll(FILE_REGEX, "");
